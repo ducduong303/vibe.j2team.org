@@ -10,20 +10,23 @@ const soundEnabled = ref(true)
 const { recordPomodoro, todayPomodoros, todayFocusMinutes, streak, weeklyData, weeklyMax } =
   useStats()
 
+let audioCtx: AudioContext | null = null
+
 function playSound() {
   if (!soundEnabled.value) return
   try {
-    const ctx = new AudioContext()
-    const oscillator = ctx.createOscillator()
-    const gain = ctx.createGain()
+    if (!audioCtx) audioCtx = new AudioContext()
+    if (audioCtx.state === 'suspended') audioCtx.resume()
+    const oscillator = audioCtx.createOscillator()
+    const gain = audioCtx.createGain()
     oscillator.connect(gain)
-    gain.connect(ctx.destination)
+    gain.connect(audioCtx.destination)
     oscillator.frequency.value = 830
     oscillator.type = 'sine'
-    gain.gain.setValueAtTime(0.3, ctx.currentTime)
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8)
-    oscillator.start(ctx.currentTime)
-    oscillator.stop(ctx.currentTime + 0.8)
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8)
+    oscillator.start(audioCtx.currentTime)
+    oscillator.stop(audioCtx.currentTime + 0.8)
   } catch {
     /* audio not supported */
   }
