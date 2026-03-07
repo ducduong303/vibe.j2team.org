@@ -35,6 +35,7 @@ let lastFrameTime = 0
 let timerIntervalId = 0
 let canvasWidth = 0
 let canvasHeight = 0
+let cachedCtx: CanvasRenderingContext2D | null = null
 
 const FREEZE_DURATION = 3000
 
@@ -72,10 +73,8 @@ function createChicken(): Chicken {
 function gameLoop(timestamp: number) {
   if (isGameOver.value || isPaused.value) return
 
-  const canvas = canvasRef.value
-  if (!canvas) return
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
+  if (!canvasRef.value || !cachedCtx) return
+  const ctx = cachedCtx
 
   const deltaTime = timestamp - lastFrameTime
   lastFrameTime = timestamp
@@ -316,6 +315,7 @@ function resizeCanvas() {
   canvasHeight = window.innerHeight
   canvas.width = canvasWidth
   canvas.height = canvasHeight
+  cachedCtx = canvas.getContext('2d')
 
   initStars()
   initGrass()
