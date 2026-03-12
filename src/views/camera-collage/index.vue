@@ -23,7 +23,7 @@ const errorMessage = ref("");
 
 // --- Điều hướng ---
 function goToHome() {
-  window.location.href = "/"; // Thay đổi route tùy theo dự án của bạn
+  window.location.href = "/";
 }
 
 // --- Camera Logic ---
